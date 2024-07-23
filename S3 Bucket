@@ -1,0 +1,34 @@
+variable "region" {
+	description = "Variable for region"
+	default = "eu-north-1"
+}
+terraform {
+	required_provider {
+		aws = {
+			source = "hashicorp/aws"
+			version = "5.54.1"
+
+		}
+		random = {
+			source = "hashicorp/aws"
+			version = "3.6.2"
+		}
+	}
+}
+provider "aws" {
+	region = var.region
+}
+resource "random_id" "rand_id" {
+	byte_length = 8
+}
+resource "aws_s3_bucket" "demo_bucket" {
+	bucket = "demo-bucket-${random_id.rand_id.hex}"    #<-------- Name of the bucket 
+}
+resource "aws_s3_object" "upload_file_in_bucket" {
+	bucket = aws_s3_bucket.demo_bucket     #<------- We have to provide in which bucket we want to upload out file 
+	source = "./file1.txt"
+	key = "mydata.txt"   #<------This is the file name we given inside the bucket .The content of the file is same as file1.txt 
+}
+output "rand_id_output"{
+	value = random_id.rand_id.hex
+}
