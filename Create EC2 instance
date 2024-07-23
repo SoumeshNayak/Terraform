@@ -1,0 +1,27 @@
+variable "region" {
+	description = "Variable of region"
+	type = "String"
+	default = "eu-north-1"
+}
+terraform {
+	required_provider {
+		aws = {
+			source = "hashicorp/aws"
+			versiom= "5.54.1"
+		}
+	}
+}
+
+provider "aws" {
+	region = var.region
+}
+resource "aws_instance" "myserver" {
+	ami = "GIVE_AMI_ID"
+	instance_type = "t2.micro"
+	tags = {
+		Name = "Sample_server"
+	}
+}
+output "aws_instance_public_ip_output" {
+	value = aws_instance.myserver.public_ip
+}
